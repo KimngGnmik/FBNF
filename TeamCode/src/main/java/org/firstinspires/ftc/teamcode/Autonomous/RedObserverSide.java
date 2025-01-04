@@ -34,6 +34,8 @@ public class RedObserverSide extends LinearOpMode {
 
     private ArmControl vertArmControl;
 
+    private int startPosition;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -66,6 +68,8 @@ public class RedObserverSide extends LinearOpMode {
         gripper.init(hardwareMap);
         gripper.gripperStopped();
         gripper.setAnglerDown();
+
+        startPosition = 0;
 
 
         // Initialize telemetry
@@ -132,11 +136,21 @@ public class RedObserverSide extends LinearOpMode {
                   .back(43)
   */
                 //places one specimen and moves back
-                .strafeRight(37)
-                .UNSTABLE_addTemporalMarkerOffset(0.0, () -> {vertArmControl.setArmPosition(0.6);})
-                .UNSTABLE_addTemporalMarkerOffset(0.2, () -> gripper.setGripperPosition(0.2))
-                .UNSTABLE_addTemporalMarkerOffset(0.6, () -> {vertGripper.gripperStopped();})
-                .back(2.5)
+                .strafeRight(11)//37 at first, 19, 15
+               // .addTemporalMarker(5, () -> {.back(28)})
+               .UNSTABLE_addTemporalMarkerOffset(2, () -> {vertArmControl.setArmPosition(0.8);})
+              //  .UNSTABLE_addTemporalMarkerOffset(0.2, () -> gripper.setGripperPosition(0.2))
+               // .UNSTABLE_addTemporalMarkerOffset(0.6, () -> {vertGripper.gripperStopped();})
+              /*  .back(28) //15 at first, 19, 24
+                .forward(10)
+                .strafeLeft(33)
+                .back(32)
+                .strafeLeft(10) //5,7
+                .forward(42) //36, 38
+                .back(42) //
+                .strafeLeft(10)
+                .forward(42)
+                /*.back(2.5)
                 .UNSTABLE_addTemporalMarkerOffset(0.0, () -> {vertArmControl.setArmPosition(0.3);})
                 .UNSTABLE_addTemporalMarkerOffset(0.2, () -> {vertGripper.setGripperPosition(0.8);})
                 .UNSTABLE_addTemporalMarkerOffset(0.6, () -> {vertGripper.gripperStopped();})
@@ -149,7 +163,7 @@ public class RedObserverSide extends LinearOpMode {
                 .back(20)
                 .strafeLeft(3)
                 .forward(20)
-                //placing one more specimen
+                //placing one more specimen */
 
 
 

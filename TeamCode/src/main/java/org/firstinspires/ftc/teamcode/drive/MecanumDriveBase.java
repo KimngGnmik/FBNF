@@ -31,6 +31,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -79,7 +80,7 @@ public class MecanumDriveBase extends MecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
-    private IMU imu = null;      // Control/Expansion Hub IMU
+    private IMU imu;      // Control/Expansion Hub IMU
     private VoltageSensor batteryVoltageSensor;
 
     AngularVelocity angularVelocity;
@@ -110,6 +111,21 @@ public class MecanumDriveBase extends MecanumDrive {
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.UP;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+        //imu.initialize(orientationOnRobot);
+        /*IMU.Parameters myIMUparameters = new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                        RevHubOrientationOnRobot.UsbFacingDirection.UP
+                        ));
+        imu = hardwareMap.get(IMU.class, "imu");
+        imu.initialize(myIMUparameters);*/
+
+        /*IMU.Parameters myIMUparameters;
+        myIMUparameters = new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
+
+        imu.initialize(myIMUparameters);*/
+
 
         // Now initialize the IMU with this mounting orientation
         // This sample expects the IMU to be in a REV Hub and named "imu".
@@ -137,7 +153,8 @@ public class MecanumDriveBase extends MecanumDrive {
         // and the placement of the dot/orientation from https://docs.revrobotics.com/rev-control-system/control-system-overview/dimensions#imu-location
         //
         // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
-        //BNO055IMUUtil.remapZAxis(imu, AxisDirection.POS_X); // the USB ports are +X. They are pointing up and are now "+Z"
+        //BNO055IMU bno055IMU = (BNO055IMU) imu;
+        //BNO055IMUUtil.remapZAxis(bno055IMU, AxisDirection.POS_Y); // the USB ports are +X. They are pointing up and are now "+Z"
         // the +Y direction is towards the motor ports.
 
 
@@ -148,8 +165,8 @@ public class MecanumDriveBase extends MecanumDrive {
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftRear.setDirection(DcMotor.Direction.REVERSE);
+        //leftFront.setDirection(DcMotor.Direction.REVERSE);
+        //leftRear.setDirection(DcMotor.Direction.REVERSE);
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -329,7 +346,8 @@ public class MecanumDriveBase extends MecanumDrive {
     @Override
     public double getRawExternalHeading() {
         //return imu.getAngularOrientation().firstAngle;
-        return 0; //imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        //return 0; //imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
         //return 55.0;
     }
@@ -337,7 +355,8 @@ public class MecanumDriveBase extends MecanumDrive {
     @Override
     public Double getExternalHeadingVelocity() {
 
-        return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).xRotationRate;
+        //return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).xRotationRate;
+        return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
         //angularVelocity = imu.getRobotAngularVelocity(AngleUnit.RADIANS);
         //float zRotationRate = angularVelocity.zRotationRate;
         //return  (double) zRotationRate;

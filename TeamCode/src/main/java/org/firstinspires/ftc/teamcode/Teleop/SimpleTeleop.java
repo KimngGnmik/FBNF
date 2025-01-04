@@ -22,6 +22,8 @@ public class SimpleTeleop extends LinearOpMode {
     private ArmControl vertArmControl;
     private SliderControl sliderControl;
 
+    public static double MOTOR_POWER = 0.6;
+
     ElapsedTime timer = new ElapsedTime();
 
     @Override
@@ -46,9 +48,10 @@ public class SimpleTeleop extends LinearOpMode {
 
         // Initialize the Mecanum drive
         MecanumDriveBase drive = new MecanumDriveBase(hardwareMap);
-        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        //drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double armMovement;
+
+        MOTOR_POWER = 0.6;
 
         // Wait for the start signal
         waitForStart();
@@ -56,14 +59,43 @@ public class SimpleTeleop extends LinearOpMode {
         while (!isStopRequested()) {
 
             // Mecanum drive control
+            /*
             drive.setWeightedDrivePower(new Pose2d(
-                    -gamepad1.left_stick_x,  // Forward/backward (previously strafe)
-                    gamepad1.left_stick_y,   // Strafe (previously forward/backward)
-                    -gamepad1.right_stick_x  // Rotate
+                    gamepad1.left_stick_y,  // strafe
+                    gamepad1.left_stick_x,   // Forward/Backwards
+                    gamepad1.right_stick_x  // Rotate
             ));
             drive.update();
+            */
 
-            // Gripper control
+            // drive.setMotorPowers(frontLeft, rearLeft, rearRight, frontRight)
+             if(gamepad1.right_stick_y<-0.2) { // forward
+                 drive.setMotorPowers(MOTOR_POWER, MOTOR_POWER, MOTOR_POWER, MOTOR_POWER);
+
+             } else if(gamepad1.right_stick_y>0.2) { // backwards
+                 drive.setMotorPowers(-MOTOR_POWER, -MOTOR_POWER, -MOTOR_POWER, -MOTOR_POWER);
+             } else if(gamepad1.right_stick_x>0.2) { //strafe right
+                 drive.setMotorPowers(MOTOR_POWER, -MOTOR_POWER, MOTOR_POWER, -MOTOR_POWER);
+             } else if(gamepad1.right_stick_x<-0.2) { //strafe left
+                 drive.setMotorPowers(-MOTOR_POWER, MOTOR_POWER, -MOTOR_POWER, MOTOR_POWER);
+             } else if(gamepad1.left_stick_x>0.2) { // rotate right
+                 drive.setMotorPowers(MOTOR_POWER, MOTOR_POWER, -MOTOR_POWER, -MOTOR_POWER);
+             } else if(gamepad1.left_stick_x<-0.2) { // rotate left
+                 drive.setMotorPowers(-MOTOR_POWER, -MOTOR_POWER, MOTOR_POWER, MOTOR_POWER);
+             } else {
+                 drive.setMotorPowers(0,0,0,0);
+             }
+             if (gamepad1.a) {
+                 MOTOR_POWER =0.4;
+             } else if (gamepad1.b) {
+                 MOTOR_POWER -=0.8;
+             } else if (gamepad1.x) {
+                 MOTOR_POWER = 0.6;
+             }
+
+
+
+                 // Gripper control
             if (gamepad2.right_stick_x > 0.2)
                 gripper.setAnglerUP();
             else if (gamepad2.right_stick_x < -0.2) {
@@ -82,49 +114,7 @@ public class SimpleTeleop extends LinearOpMode {
 
             // Reset the timer for the next step
 
-            if(gamepad2.b){ // To Move block from Hor Gripper to Vert Gripper (Automation)
-                /*Bottom gripper holds on to the sample while the vertical gripper opens and
-                moves to an optimal position for transfer */
-                timer.reset();
-                gripper.setGripperPosition(0);
-                vertGripper.setGripperPosition(0);
-                vertArmControl.setArmPosition(0);
-                while (timer.seconds() <1 && opModeIsActive()){
 
-                }
-                //Angler is set to the middle and waits 0.5 seconds
-                timer.reset();
-                gripper.setAnglerMid();
-                while (timer.seconds() <1 && opModeIsActive()){
-
-                }
-                //Arm goes up and waits 0.5 seconds
-                timer.reset();
-                armControl.setArmPosition(0.5);
-                while(timer.seconds() <1 && opModeIsActive()){
-
-                }
-                //vertGripper holds onto sample and waits 0.5 seconds
-                timer.reset();
-                vertGripper.setGripperPosition(1);
-                while(timer.seconds() <1 && opModeIsActive()){
-
-                }
-                //Gripper is set open and waits 0.5 seconds
-                timer.reset();
-                gripper.setGripperPosition(1);
-                while(timer.seconds() <1 && opModeIsActive()) {
-
-                }
-                //Arm moves down and waits 0.5 seconds
-                timer.reset();
-                armControl.setArmPosition(0);
-                while(timer.seconds()<1 && opModeIsActive()){
-
-                }
-
-                vertArmControl.setArmPosition(1);
-            }
 
             // Arm control with left stick Y
             if(gamepad2.dpad_up == true) {
@@ -135,8 +125,8 @@ public class SimpleTeleop extends LinearOpMode {
             }
 
 
-/*
-            // Horizontal slider control
+
+           /* // Horizontal slider control
             if (gamepad1.dpad_left) {
                 sliderControl.controlHorizontalSlider(-0.5); // Retract horizontal slider
             } else if (gamepad1.dpad_right) {
@@ -146,7 +136,7 @@ public class SimpleTeleop extends LinearOpMode {
                 sliderControl.controlHorizontalSlider(0); // Stop horizontal slider if no input
             }
 
-            // Vertical slider control
+
             if (gamepad1.dpad_up) {
                 sliderControl.controlVerticalSlider(-0.5); // Retract vertical slider
             } else if (gamepad1.dpad_down) {
@@ -155,13 +145,14 @@ public class SimpleTeleop extends LinearOpMode {
             else{
                 sliderControl.controlVerticalSlider(0); // Stop vertical slider if no input
             }
-
 */
+
             // Telemetry updates
             telemetry.addData("Gripper Position", gripper.getGripperPosition());
             telemetry.addData("Arm Position", armControl.getArmPosition());
             //telemetry.addData("Vertical Slider Length", sliderControl.getVerticalSliderLen());
             //telemetry.addData("Horizontal Slider Length", sliderControl.getHorizontalSliderLen());
+            telemetry.addData("Motor Power", MOTOR_POWER);
             telemetry.update();
         }
     }
