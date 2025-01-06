@@ -5,6 +5,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 //import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -13,6 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 ;
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.firstinspires.ftc.teamcode.drive.MecanumDriveBase;
 //import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.Teleop.ArmControl;
@@ -33,8 +35,6 @@ public class RedObserverSide extends LinearOpMode {
     private Gripper vertGripper;
 
     private ArmControl vertArmControl;
-
-    private int startPosition;
 
 
     @Override
@@ -69,21 +69,79 @@ public class RedObserverSide extends LinearOpMode {
         gripper.gripperStopped();
         gripper.setAnglerDown();
 
-        startPosition = 0;
 
 
         // Initialize telemetry
         //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         // Define starting position
-        Pose2d startPos = new Pose2d(8, 53, Math.toRadians(0));
+       /* Pose2d startPos = new Pose2d(8, 53, Math.toRadians(0));
         drive.setPoseEstimate(startPos);
 
         Pose2d SpecimenDropoffPos = new Pose2d(33, 66, Math.toRadians(0));
-
+*/
         // Define the trajectory sequence for the Observer side
-        TrajectorySequence StageRedObserver = drive.trajectorySequenceBuilder(startPos)
-                /*
+       // TrajectorySequence StageRedObserver = drive.trajectorySequenceBuilder(startPos)
+
+               /* .strafeRight(11)//37 at first, 19, 15
+                .back(28) //15 at first, 19, 24
+                .forward(10)
+                .strafeLeft(33)
+                .back(32)
+                .strafeLeft(10) //5,7
+                .forward(42) //36, 38
+                .back(42) //
+                .strafeLeft(10)
+                .forward(42)    */
+
+        waitForStart();
+
+                /*Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
+                drive.setPoseEstimate(startPose);
+
+
+                Trajectory traj1= drive.trajectoryBuilder(new Pose2d())
+                        .splineTo(new Vector2d(-10, 10), Math.toRadians(90))
+                        .build();
+
+                drive.followTrajectory(traj1); */
+
+        Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
+       drive.setPoseEstimate(startPose);
+        Trajectory traj1 = drive.trajectoryBuilder(startPose)
+                .splineTo(new Vector2d(8,30), Math.toRadians(0))
+                .build();
+      //  Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
+              //  .forward(10)
+               // .build();
+
+        drive.followTrajectory(traj1);
+       // drive.followTrajectory(traj2);
+
+
+
+
+
+
+
+        // Wait for start signal
+
+        // Execute the trajectory sequence
+        //drive.followTrajectorySequence(StageRedObserver);
+
+      /*  while (!isStopRequested() && drive.isBusy()) {
+            drive.update(); // Call drive.update() in a loop
+        } */
+
+
+
+    }
+}
+
+
+
+
+/*
                   // Step 1: Set Arm to the Right Angle with the Gripper parallel to ground.
                   // At the same time Extend slider length to 1 inch and wait for 0.5 second in the end
                   .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {armControl.setDesArmPosDeg(58);})
@@ -134,23 +192,17 @@ public class RedObserverSide extends LinearOpMode {
                   .forward(43)
                   .strafeRight(9)
                   .back(43)
+
+
   */
-                //places one specimen and moves back
-                .strafeRight(11)//37 at first, 19, 15
-               // .addTemporalMarker(5, () -> {.back(28)})
-               .UNSTABLE_addTemporalMarkerOffset(2, () -> {vertArmControl.setArmPosition(0.8);})
-              //  .UNSTABLE_addTemporalMarkerOffset(0.2, () -> gripper.setGripperPosition(0.2))
-               // .UNSTABLE_addTemporalMarkerOffset(0.6, () -> {vertGripper.gripperStopped();})
-              /*  .back(28) //15 at first, 19, 24
-                .forward(10)
-                .strafeLeft(33)
-                .back(32)
-                .strafeLeft(10) //5,7
-                .forward(42) //36, 38
-                .back(42) //
-                .strafeLeft(10)
-                .forward(42)
-                /*.back(2.5)
+//places one specimen and moves back
+
+// .addTemporalMarker(5, () -> {.back(28)})
+//UNSTABLE_addTemporalMarkerOffset(2, () -> {vertArmControl.setArmPosition(0.8);})
+//  .UNSTABLE_addTemporalMarkerOffset(0.2, () -> gripper.setGripperPosition(0.2))
+// .UNSTABLE_addTemporalMarkerOffset(0.6, () -> {vertGripper.gripperStopped();})
+
+/*.back(2.5)
                 .UNSTABLE_addTemporalMarkerOffset(0.0, () -> {vertArmControl.setArmPosition(0.3);})
                 .UNSTABLE_addTemporalMarkerOffset(0.2, () -> {vertGripper.setGripperPosition(0.8);})
                 .UNSTABLE_addTemporalMarkerOffset(0.6, () -> {vertGripper.gripperStopped();})
@@ -168,26 +220,7 @@ public class RedObserverSide extends LinearOpMode {
 
 
 
-                // Final build for this trajectory
-                .build();
-
-
-        // Wait for start signal
-        waitForStart();
-
-        // Execute the trajectory sequence
-        drive.followTrajectorySequence(StageRedObserver);
-
-
-
-    }
-}
-
-
-
-
-
-
+// Final build for this trajectory
 
 
 /* notes for future refrences to servo/gripper

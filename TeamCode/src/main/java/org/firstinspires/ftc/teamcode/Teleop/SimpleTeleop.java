@@ -40,11 +40,11 @@ public class SimpleTeleop extends LinearOpMode {
         armControl.init(hardwareMap);
 
         // Initialize the slider control
-        //sliderControl = new SliderControl();
-        //sliderControl.init(hardwareMap, "verticalSlider", "horizontalSlider");
+        sliderControl = new SliderControl();
+        sliderControl.init(hardwareMap, "verticalSlider", "horizontalSlider");
 
-        //vertArmControl = new ArmControl();
-        //vertArmControl.init(hardwareMap);
+        vertArmControl = new ArmControl();
+        vertArmControl.init(hardwareMap);
 
         // Initialize the Mecanum drive
         MecanumDriveBase drive = new MecanumDriveBase(hardwareMap);
@@ -88,7 +88,7 @@ public class SimpleTeleop extends LinearOpMode {
              if (gamepad1.a) {
                  MOTOR_POWER =0.4;
              } else if (gamepad1.b) {
-                 MOTOR_POWER -=0.8;
+                 MOTOR_POWER =0.8;
              } else if (gamepad1.x) {
                  MOTOR_POWER = 0.6;
              }
@@ -126,7 +126,7 @@ public class SimpleTeleop extends LinearOpMode {
 
 
 
-           /* // Horizontal slider control
+            // Horizontal slider control
             if (gamepad1.dpad_left) {
                 sliderControl.controlHorizontalSlider(-0.5); // Retract horizontal slider
             } else if (gamepad1.dpad_right) {
@@ -145,7 +145,7 @@ public class SimpleTeleop extends LinearOpMode {
             else{
                 sliderControl.controlVerticalSlider(0); // Stop vertical slider if no input
             }
-*/
+
 
             // Telemetry updates
             telemetry.addData("Gripper Position", gripper.getGripperPosition());
