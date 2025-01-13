@@ -7,11 +7,14 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry; // Import for telemetry
 
 ;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
@@ -37,6 +40,8 @@ public class RedObserverSide extends LinearOpMode {
     private ArmControl vertArmControl;
 
 
+
+
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize Mecanum Drive
@@ -57,7 +62,6 @@ public class RedObserverSide extends LinearOpMode {
         vertArmControl.init(hardwareMap);
 
 
-
         // - - - Setting up Slider motors - - - //
         sliderControl = new SliderControl();
         sliderControl.init(hardwareMap, "verticalSlider", "horizontalSlider");
@@ -69,163 +73,79 @@ public class RedObserverSide extends LinearOpMode {
         gripper.gripperStopped();
         gripper.setAnglerDown();
 
+        Pose2d startPose = new Pose2d(0, 0, Math.toRadians(180));
+        drive.setPoseEstimate(startPose);
 
+        Trajectory traj1 = drive.trajectoryBuilder(startPose, true)
+                .splineTo(new Vector2d(30,8), Math.toRadians(0))
+                .build();
 
-        // Initialize telemetry
-        //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        Trajectory splineLeft = drive.trajectoryBuilder(startPose, true)
+                .splineTo(new Vector2d(30,-15), Math.toRadians(0))
+                .build();
 
-        // Define starting position
-       /* Pose2d startPos = new Pose2d(8, 53, Math.toRadians(0));
-        drive.setPoseEstimate(startPos);
+        Trajectory specimenSpline = drive.trajectoryBuilder(startPose, true)
+                .splineToLinearHeading(new Pose2d(25, 10, Math.toRadians(180)), Math.toRadians(360))
+                .build();
+        // x is forward y is back
 
-        Pose2d SpecimenDropoffPos = new Pose2d(33, 66, Math.toRadians(0));
-*/
-        // Define the trajectory sequence for the Observer side
-       // TrajectorySequence StageRedObserver = drive.trajectorySequenceBuilder(startPos)
-
-               /* .strafeRight(11)//37 at first, 19, 15
-                .back(28) //15 at first, 19, 24
+        TrajectorySequence trajSequence = drive.trajectorySequenceBuilder(startPose)
+                .addTrajectory(traj1)
+                //.splineTo(new Vector2d(30, -10), Math.toRadians(0))  // Add traj2 to the sequence
                 .forward(10)
-                .strafeLeft(33)
-                .back(32)
-                .strafeLeft(10) //5,7
-                .forward(42) //36, 38
-                .back(42) //
-                .strafeLeft(10)
-                .forward(42)    */
+                .strafeLeft(23)
+                // spline to submersible
+                .addTrajectory(splineLeft)
+                // goes back 18
+                .forward(18)
+                // goes to the right 4
+                .strafeLeft(4)
+                // forward
+                .back(20)
+                .strafeLeft(5)
+                .forward(26)
+                .back(23)
+                .addTrajectory(specimenSpline)
+                .forward(3)
+
+                .build();
 
         waitForStart();
 
-                /*Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
-                drive.setPoseEstimate(startPose);
 
 
-                Trajectory traj1= drive.trajectoryBuilder(new Pose2d())
-                        .splineTo(new Vector2d(-10, 10), Math.toRadians(90))
-                        .build();
-
-                drive.followTrajectory(traj1); */
-
-        Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
-       drive.setPoseEstimate(startPose);
-        Trajectory traj1 = drive.trajectoryBuilder(startPose)
-                .splineTo(new Vector2d(8,30), Math.toRadians(0))
-                .build();
-      //  Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
-              //  .forward(10)
-               // .build();
-
-        drive.followTrajectory(traj1);
-       // drive.followTrajectory(traj2);
+        drive.followTrajectorySequenceAsync(trajSequence);
 
 
 
 
+        //while (!isStopRequested() && opModeIsActive()) ;
 
 
 
-        // Wait for start signal
 
-        // Execute the trajectory sequence
-        //drive.followTrajectorySequence(StageRedObserver);
+        /*
+         Robot facing forward:
+         30, 8, Math.toRadians(0) spline to the left
+         30, -8, Math.toRadians(0) spline to the right
+         // cannot have Negative: 30, 8, Math.toRadians(-90) splines to the left but rotates right ~90 degrees
+         30, 8, Math.toRadians(90) splines to the left but rotates left ~90 degrees
+         -30, 8, Math.toRadians(0) rotates left 180 degrees and moves forward
 
-      /*  while (!isStopRequested() && drive.isBusy()) {
-            drive.update(); // Call drive.update() in a loop
-        } */
+         Trajectory traj1 = drive.trajectoryBuilder(startPose, true) turns 180 degrees and then moves backwards
+        */
+
+        while (opModeIsActive()) {
+            drive.update(); // VERY IMPORTANT!
+
+            Pose2d poseEstimate = drive.getPoseEstimate();
+            telemetry.addData("finalX", poseEstimate.getX());
+            telemetry.addData("finalY", poseEstimate.getY());
+            telemetry.addData("finalHeading", Math.toRadians(poseEstimate.getHeading()));
+            telemetry.update();
+        }
 
 
 
     }
 }
-
-
-
-
-/*
-                  // Step 1: Set Arm to the Right Angle with the Gripper parallel to ground.
-                  // At the same time Extend slider length to 1 inch and wait for 0.5 second in the end
-                  .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {armControl.setDesArmPosDeg(58);})
-                  .UNSTABLE_addTemporalMarkerOffset(0.5,()->{gripper.setAnglerUP();})
-                  .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {sliderControl.setDesSliderLen(1);})
-                  .waitSeconds(0.5)
-
-                  // Step 2: Move the robot to the Specimen drop off position and set the gripper to
-                  // be parallel to the side for drop off operation and wait for 0.2 second in the end
-                  .lineToLinearHeading(SpecimenDropoffPos)
-                  .UNSTABLE_addTemporalMarkerOffset(0.2,()->{gripper.setAnglerDown();})
-                  .waitSeconds(0.2)
-
-                  // Step 3: Move forward 6 inch to prepare for specimen drop off, set arm angle down to 45 deg
-                  // and set Gripper to be rolling in to hold the specimen and wait for 0.1 second in the end
-                  .forward(6)
-                  .UNSTABLE_addTemporalMarkerOffset(0.0, () -> {armControl.setDesArmPosDeg(45);})
-                  .UNSTABLE_addTemporalMarkerOffset(0.2, () -> gripper.gripperForward(0.3))
-                  .waitSeconds(0.1)
-
-                  // Step 4: Stop the gripper after 0.4 second and move the robot backward 11 inch
-                  .UNSTABLE_addTemporalMarkerOffset(0.2, () -> gripper.gripperForward(0.3))
-                  .UNSTABLE_addTemporalMarkerOffset(0.6, () -> {gripper.gripperStopped();})
-                  .back(11)
-                  .waitSeconds(1)
-
-                  .UNSTABLE_addTemporalMarkerOffset(0.2, () -> gripper.gripperReverse(-0.3))
-                  .UNSTABLE_addTemporalMarkerOffset(0.6, () -> {gripper.gripperStopped();})
-                  .waitSeconds(0.5)
-
-                  // Step 5: Rollback the slider and set gripper parallel to the ground and strafe to the right
-                  // for 33 in with the arm power off. Then move forward 28 inch then straft right 12 inch
-                  // for the first sample push back preparation
-                  .strafeRight(33)
-
-                  .UNSTABLE_addTemporalMarkerOffset(0.2,()->{gripper.setAnglerUP();})
-                  .UNSTABLE_addTemporalMarkerOffset(0.1, () -> {sliderControl.setDesSliderLen(0);})
-                  .UNSTABLE_addTemporalMarkerOffset(0.1, () -> {armControl.setArmPower(0);})
-                  .forward(28)
-
-                  // Step 6: Strafe right for 12 inch and back 43 inch for pushing the first sampel to the
-                  // observer zone
-                  .strafeRight(12)
-                  .back(43)
-
-                  // Step 7: Move forward for 43 inch and then strafe to the right for 9 inch then
-                  // back for 43 inch to push the second sample to the observe zone
-                  .forward(43)
-                  .strafeRight(9)
-                  .back(43)
-
-
-  */
-//places one specimen and moves back
-
-// .addTemporalMarker(5, () -> {.back(28)})
-//UNSTABLE_addTemporalMarkerOffset(2, () -> {vertArmControl.setArmPosition(0.8);})
-//  .UNSTABLE_addTemporalMarkerOffset(0.2, () -> gripper.setGripperPosition(0.2))
-// .UNSTABLE_addTemporalMarkerOffset(0.6, () -> {vertGripper.gripperStopped();})
-
-/*.back(2.5)
-                .UNSTABLE_addTemporalMarkerOffset(0.0, () -> {vertArmControl.setArmPosition(0.3);})
-                .UNSTABLE_addTemporalMarkerOffset(0.2, () -> {vertGripper.setGripperPosition(0.8);})
-                .UNSTABLE_addTemporalMarkerOffset(0.6, () -> {vertGripper.gripperStopped();})
-                .forward(3)
-                //moving samples to observer area (and maybe park there)
-                .strafeLeft(7)
-                .back(5)
-                .strafeLeft(3)
-                .forward(20)
-                .back(20)
-                .strafeLeft(3)
-                .forward(20)
-                //placing one more specimen */
-
-
-
-
-// Final build for this trajectory
-
-
-/* notes for future refrences to servo/gripper
-gripperClosed()
-gripperOpen
-
-
-*/

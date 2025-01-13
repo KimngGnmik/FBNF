@@ -24,7 +24,7 @@ public class SquareAuto extends LinearOpMode {
         Gripper gripper= new Gripper(this);
         gripper.init(hardwareMap); */
 
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         //move forward 20 in
         Trajectory traj1 = drive.trajectoryBuilder(new Pose2d())
@@ -65,9 +65,9 @@ public class SquareAuto extends LinearOpMode {
 
         waitForStart();
 
-        drive.followTrajectory(traj1);
+        drive.followTrajectoryAsync(traj1);
         drive.followTrajectory(traj2);
-        drive.followTrajectory(traj3);
+        drive.followTrajectoryAsync(traj3);
         drive.followTrajectory(traj4);
         //drive.followTrajectory(traj5);
 
