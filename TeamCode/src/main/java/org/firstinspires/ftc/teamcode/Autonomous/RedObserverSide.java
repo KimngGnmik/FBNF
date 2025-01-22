@@ -92,8 +92,9 @@ public class RedObserverSide extends LinearOpMode {
         TrajectorySequence trajSequence = drive.trajectorySequenceBuilder(startPose)
                 .addTrajectory(traj1)
                 //.splineTo(new Vector2d(30, -10), Math.toRadians(0))  // Add traj2 to the sequence
-                .forward(10)
-                .strafeLeft(23)
+                .forward(0.02)
+                //.strafeLeft(23)
+                .strafeLeft(20)
                 // spline to submersible
                 .addTrajectory(splineLeft)
                 // goes back 18
@@ -102,7 +103,7 @@ public class RedObserverSide extends LinearOpMode {
                 .strafeLeft(4)
                 // forward
                 .back(20)
-                .strafeLeft(5)
+                //.strafeLeft(5)
                 .forward(26)
                 .back(23)
                 .addTrajectory(specimenSpline)

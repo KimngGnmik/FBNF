@@ -57,10 +57,10 @@ public class DriveConstants {
      */
 
     //For 52 mm radius wheels
-    public static double WHEEL_RADIUS = 52 / 25.4; // in inch
+    public static double WHEEL_RADIUS = 7.0/4.0; // in inch
 
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 20.34;// in in starting 11.5
+    public static double TRACK_WIDTH = 16;// in in starting 11.5
 
 
     /*
@@ -70,7 +70,7 @@ public class DriveConstants {
      * empirically tuned.
      */
     public static double kV = 0.018; //1.0 / rpmToVelocity(MAX_RPM) orginal was 0.017
-    public static double kA = 0.0035;
+    public static double kA = 0.0038;
     public static double kStatic = 0.0;
 
     /*
@@ -80,10 +80,10 @@ public class DriveConstants {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL = 60;
-    public static double MAX_ACCEL = 40;
-    public static double MAX_ANG_VEL = Math.toRadians(360);
-    public static double MAX_ANG_ACCEL = Math.toRadians(300);
+    public static double MAX_VEL = 60; //60
+    public static double MAX_ACCEL = 40; //40
+    public static double MAX_ANG_VEL = Math.toRadians(360); //360
+    public static double MAX_ANG_ACCEL = Math.toRadians(300); //300
 
 
     public static double encoderTicksToInches(double ticks) {

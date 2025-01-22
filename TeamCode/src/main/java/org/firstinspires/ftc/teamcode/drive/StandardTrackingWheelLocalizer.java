@@ -29,11 +29,10 @@ import java.util.List;
 public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
     //https://www.gobilda.com/odometry-pod-43mm-width-48mm-wheel/
     public static double TICKS_PER_REV = 2000; // goBilda odometry pods is 2000 from 8192
-    public static double WHEEL_RADIUS = 24/25.4; //  odometry pod wheels are 24 radius from 30 (48 mm dia) REV are 60
+    public static double WHEEL_RADIUS = 7.0/4.0; //  odometry pod wheels are 24 radius from 30 (48 mm dia) REV are 60
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
-
-    public static double LATERAL_DISTANCE = 11.49; // starting 12 in from 10.83; distance between the left and right wheels
-    public static double FORWARD_OFFSET = 1.5; // starting 1.5 in from 2; offset of the lateral wheel
+    public static double LATERAL_DISTANCE = 35.0/4.0; // starting 12 in from 10.83; distance between the left and right wheels
+    public static double FORWARD_OFFSET = 5; // starting 1.5 in from 2; offset of the lateral wheel
 
     private Encoder leftEncoder, rightEncoder, perpendicularEncoder;
 
