@@ -4,7 +4,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class ArmControl {
-    private Servo armServo;
+    private Servo horArmControl;
+    private Servo vertArmControl;
     private double armPosition = 0.5; // Default arm position
 
     // Constants for servo limits
@@ -20,26 +21,34 @@ public class ArmControl {
      * @param hardwareMap The hardware map to access hardware configuration.
      */
     public void init(HardwareMap hardwareMap) {
-        armServo = hardwareMap.get(Servo.class, "armControl");
-        armServo.setPosition(armPosition); // Initialize to default position
+        horArmControl = hardwareMap.get(Servo.class, "horArmControl");
+        horArmControl.setPosition(armPosition); // Initialize to default position
+
+        vertArmControl = hardwareMap.get(Servo.class, "vertArmControl");
+        vertArmControl.setPosition(ARM_MAX_POS); // Initialize to default position
     }
 
     /**
      * Sets the arm position directly, ensuring it stays within the allowed range.
      * @param position The desired position for the arm servo.
      */
-    public void setArmPosition(double position) {
+    public void sethorArmControl(double position) {
         // Constrain the position to within valid limits
         armPosition = Math.max(ARM_MIN_POS, Math.min(ARM_MAX_POS, position));
-        armServo.setPosition(armPosition);
+        horArmControl.setPosition(armPosition);
+    }
+    public void setvertArmControl(double position) {
+        // Constrain the position to within valid limits
+        armPosition = Math.max(ARM_MIN_POS, Math.min(ARM_MAX_POS, position));
+        vertArmControl.setPosition(armPosition);
     }
 
     /**
      * Increments the arm position by a specified amount.
      * @param increment The amount to change the arm position by.
      */
-    public void adjustArmPosition(double increment) {
-        setArmPosition(armPosition + increment);
+    public void adjustVertArmPosition(double increment) {
+        sethorArmControl(armPosition + increment);
     }
 
     /**

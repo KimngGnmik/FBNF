@@ -7,8 +7,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 @Config // This is so the dashboard will pick up variables
 public class Gripper {
 
-    private Servo gripper = null;
-    private Servo angler = null;
+    private Servo horzGripper = null;
+    private Servo vertGripper = null;
+    private Servo anglerHorizontal = null;
+    private Servo anglerVertical = null;
 
     // Constants for gripper limits
     private static final double GRIPPER_MIN_POS = 0.0; // Minimum gripper position
@@ -25,43 +27,59 @@ public class Gripper {
 
     public void init(HardwareMap hwMap) {
         // Initialize the gripper and angler servos
-        gripper = hwMap.get(Servo.class, "gripper"); // Ctrl hub port 0
-        angler = hwMap.get(Servo.class, "angler"); // Ctrl Hub port 1
-        gripper.setDirection(Servo.Direction.REVERSE);
-        gripper.setPosition(gripperPosition); // Start at a safe position
+        horzGripper = hwMap.get(Servo.class, "horzGripper"); // Ctrl hub port 0
+        anglerHorizontal = hwMap.get(Servo.class, "anglerHorizontal"); // Ctrl Hub port 1
+        horzGripper.setDirection(Servo.Direction.REVERSE);
+        horzGripper.setPosition(gripperPosition); // Start at a safe position
+
+        vertGripper = hwMap.get(Servo.class, "vertGripper"); // Ctrl hub port 0
+        anglerVertical = hwMap.get(Servo.class, "anglerVertical"); // Ctrl Hub port 1
+        vertGripper.setDirection(Servo.Direction.REVERSE);
+        horzGripper.setPosition(gripperPosition); // Start at a safe position
     }
 
     public void setGripperPosition(double increment) {
         // Calculate the new position and constrain it within the limits
         //double newPosition = gripperPosition + increment;
         gripperPosition = Math.max(GRIPPER_MIN_POS, Math.min(GRIPPER_MAX_POS, increment));
-        gripper.setPosition(gripperPosition); // Update the servo
+        horzGripper.setPosition(gripperPosition); // Update the servo
     }
 
     public void gripperStopped() {
-        gripper.setPosition(gripperPosition); // Stop gripper movement
+        horzGripper.setPosition(gripperPosition); // Stop gripper movement
     }
 
     public void setGripperPositionDirect(double position) {
         // Constrain the position within limits
         gripperPosition = Math.max(GRIPPER_MIN_POS, Math.min(GRIPPER_MAX_POS, position));
-        gripper.setPosition(gripperPosition);
+        horzGripper.setPosition(gripperPosition);
     }
 
-    public void setAnglerUP() {
-        angler.setPosition(ANGLER_UP); // Move angler to up position
+    public void setAnglerHorizontalUP() {
+        anglerHorizontal.setPosition(ANGLER_UP); // Move angler to up position
     }
 
-    public void setAnglerDown() {
-        angler.setPosition(ANGLER_DOWN); // Move angler to down position
+    public void setAnglerHorizontalDOWN() {
+        anglerHorizontal.setPosition(ANGLER_DOWN); // Move angler to down position
     }
-    public void setAnglerMid() {
-        angler.setPosition(ANGLER_UP/2);
+    public void setAnglerHorizontalMID() {
+        anglerHorizontal.setPosition(ANGLER_UP/2);
+    }
+
+    public void setAnglerVerticalUP() {
+        anglerVertical.setPosition(ANGLER_UP); // Move angler to up position
+    }
+
+    public void setAnglerVerticalDOWN() {
+        anglerVertical.setPosition(ANGLER_DOWN); // Move angler to down position
+    }
+    public void setAnglerVerticalMID() {
+        anglerVertical.setPosition(ANGLER_UP/2);
     }
     public double getGripperPosition() {
         return gripperPosition;
     }
     public void setAnglerInit() {
-        angler.setPosition(0.0);
+        anglerHorizontal.setPosition(0.0);
     }
 }

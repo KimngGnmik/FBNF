@@ -29,7 +29,7 @@ public class SimpleTeleop extends LinearOpMode {
      */
 
     // Horizontal gripper and Horizontal Arm control of the type Gripper and Arm Control
-    private Gripper horgripper;
+    private Gripper horzGripper;
     private ArmControl horArmControl;
 
 
@@ -61,8 +61,8 @@ public class SimpleTeleop extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize the gripper
-        horgripper = new Gripper();
-        horgripper.init(hardwareMap);
+        horzGripper = new Gripper();
+        horzGripper.init(hardwareMap);
 
         vertGripper = new Gripper();
         vertGripper.init(hardwareMap);
@@ -131,33 +131,33 @@ public class SimpleTeleop extends LinearOpMode {
 
 
              // Horizontal Angler
-            if (gamepad2.right_stick_x > 0.2)
-                horgripper.setAnglerUP();
-            else if (gamepad2.right_stick_x < -0.2) {
-                horgripper.setAnglerDown();
-            } else {
-                horgripper.setAnglerMid();
-            }
+            if (gamepad2.a)
+                horzGripper.setAnglerHorizontalUP();
+            else if (gamepad2.b) {
+                horzGripper.setAnglerHorizontalDOWN();
+            } /*else {
+                horzGripper.setAnglerHorizontalMID();
+            }*/
 
             // Vertical Angler
-            if (gamepad2.right_stick_y > 0.2){
-                vertGripper.setAnglerUP();
+            if (gamepad2.left_bumper){
+                vertGripper.setAnglerVerticalUP();
             }
-            else if (gamepad2.right_stick_x < -0.2){
-                vertGripper.setAnglerDown();
+            else if (gamepad2.right_bumper){
+                vertGripper.setAnglerVerticalDOWN();
             }
-            else{
-                vertGripper.setAnglerMid();
-            }
+            /*else{
+                vertGripper.setAnglerVerticalMID();
+            }*/
 
 
             // Horizontal Gripper
             if (gamepad2.dpad_left) {
                 //open, which is 1
-                horgripper.setGripperPosition(0.6);
+                horzGripper.setGripperPosition(0.6);
             } else if (gamepad2.dpad_right) {
                 //close, which is 0
-                horgripper.setGripperPosition(0.9);
+                horzGripper.setGripperPosition(0.9);
             }
 
             // Vertical Gripper
@@ -173,23 +173,19 @@ public class SimpleTeleop extends LinearOpMode {
 
             // Arm control with left stick X
             if(gamepad2.left_stick_x > 0.2) {
-                horArmControl.setArmPosition(0);
+                horArmControl.sethorArmControl(0);
             } else if (gamepad2.left_stick_x < -0.2) { // Scale the stick input
-                horArmControl.setArmPosition(1);
-            }
-            else{
-                horArmControl.setArmPosition(0.5);
+                horArmControl.sethorArmControl(1);
             }
 
+
             // Arm control with left stick Y
-            if(gamepad2.left_stick_y > 0.2) {
-                vertArmControl.setArmPosition(0);
-            } else if (gamepad2.left_stick_y < -0.2) { // Scale the stick input
-                vertArmControl.setArmPosition(1);
+            if(gamepad2.right_stick_y > 0.2) {
+                vertArmControl.setvertArmControl(0);
+            } else if (gamepad2.right_stick_y < -0.2) { // Scale the stick input
+                vertArmControl.setvertArmControl(1);
             }
-            else{
-                vertArmControl.setArmPosition(0.5);
-            }
+
 
 
 
@@ -215,7 +211,7 @@ public class SimpleTeleop extends LinearOpMode {
 
 
             // Telemetry updates
-            telemetry.addData("Gripper Position", horgripper.getGripperPosition());
+            telemetry.addData("Gripper Position", horzGripper.getGripperPosition());
             telemetry.addData("Arm Position", horArmControl.getArmPosition());
             //telemetry.addData("Vertical Slider Length", sliderControl.getVerticalSliderLen());
             //telemetry.addData("Horizontal Slider Length", sliderControl.getHorizontalSliderLen());

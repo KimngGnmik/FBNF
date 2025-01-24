@@ -31,7 +31,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 public class RedObserverSide extends LinearOpMode {
     private ElapsedTime AutoTimer = new ElapsedTime();
     private ArmControl armControl;
-    private Gripper gripper;
+    //private Gripper gripper;
     private SliderControl sliderControl;
     private double speedFactor = 0.65;
 
@@ -51,12 +51,12 @@ public class RedObserverSide extends LinearOpMode {
         // - - - Setting up Arm motors - - - //
         armControl = new ArmControl();
         armControl.init(hardwareMap);
-        armControl.setArmPosition(0);
+        armControl.setvertArmControl(0);
 
         vertGripper = new Gripper();
         vertGripper.init(hardwareMap);
         vertGripper.gripperStopped();
-        vertGripper.setAnglerDown();
+        vertGripper.setAnglerVerticalDOWN();
 
         vertArmControl = new ArmControl();
         vertArmControl.init(hardwareMap);
@@ -68,10 +68,10 @@ public class RedObserverSide extends LinearOpMode {
 
 
         // - - - Initialize gripper to starting position - - - //
-        gripper = new Gripper();
-        gripper.init(hardwareMap);
-        gripper.gripperStopped();
-        gripper.setAnglerDown();
+        //gripper = new Gripper();
+        //gripper.init(hardwareMap);
+        //gripper.gripperStopped();
+        //gripper.setAnglerVerticalDOWN();
 
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(180));
         drive.setPoseEstimate(startPose);
